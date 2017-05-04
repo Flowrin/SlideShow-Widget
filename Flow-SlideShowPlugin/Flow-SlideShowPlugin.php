@@ -48,26 +48,29 @@ class fp_Widget extends WP_Widget
         public function update($new_instance,$old_instance)
         {
             $instance=array();
-            $instance['title']=strip_tags($new_instance['title']);
+            $instance['title']=$new_instance['title'];
             return $instance;
         }       
 
         public function widget ($args,$instance)
         {
-            extract($args);
+        echo $args['before_widget'];
+        if(!empty($instance['title']))
+        {
+        echo $args['before_title']
+        . $instance['title']
+        . $args['after_title'];
+        }
 
-            $title=apply_filters ('widget_title',$instance['title']);
-            echo $before_widget;
-            if(!empty($title))
-                echo $before_title . $title . $after_title;
             echo fp_function('fp_widget');
-            echo $after_title;
+         
 
         }
 
     }
 
-    function fp_register_scripts() {
+    function fp_register_scripts() 
+    {
     if (!is_admin()) {
         wp_register_script('np_nivo-script', plugins_url('nivo-slider/jquery.nivo.slider.js', __FILE__));
         wp_register_script('np_script', plugins_url('script.js', __FILE__));
@@ -77,7 +80,8 @@ class fp_Widget extends WP_Widget
     }
 }
 
-    function fp_register_styles() {
+    function fp_register_styles()
+     {
       
     wp_register_style('fp_styles', plugins_url('nivo-slider/nivo-slider.css', __FILE__));
     wp_register_style('fp_styles_theme', plugins_url('nivo-slider/themes/default/default.css', __FILE__));
@@ -95,7 +99,7 @@ class fp_Widget extends WP_Widget
 
     }
 
-    function fp_function ($type='fp_function')
+    function fp_function ()
     {
 
         global $post,$type;
@@ -104,7 +108,8 @@ class fp_Widget extends WP_Widget
     $result .= '<div id="slider" class="nivoSlider">';
     
     $querry = new WP_Query($args);
-    while ($querry->have_posts()) {
+    while ($querry->have_posts()) 
+    {
         $querry->the_post();
 
         $img = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), $type);
@@ -116,7 +121,8 @@ class fp_Widget extends WP_Widget
     return $result;
 }
 
-function fp_init() {
+function fp_init()
+ {
     add_shortcode('fp-shortcode', 'fp_function');
     
     add_image_size('fp_widget', 180, 100, true);
@@ -124,8 +130,11 @@ function fp_init() {
     
     $args = array('public' => true, 
                     'label' => 'Flow CptImages', 
-                    'supports' => array('title', 'thumbnail'));
-    
+                    'supports' => array(
+                                        'title',   
+                                        'thumbnail'
+                                        ));
+
     register_post_type('np_images', $args);
 }
 
