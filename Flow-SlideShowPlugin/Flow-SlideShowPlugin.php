@@ -69,10 +69,8 @@ class fp_Widget extends WP_Widget
 
     function fp_register_scripts() {
     if (!is_admin()) {
-        // register  
         wp_register_script('np_nivo-script', plugins_url('nivo-slider/jquery.nivo.slider.js', __FILE__));
         wp_register_script('np_script', plugins_url('script.js', __FILE__));
-        // enqueue  
         wp_enqueue_script('jquery');
         wp_enqueue_script('np_nivo-script');
         wp_enqueue_script('np_script');
@@ -80,11 +78,11 @@ class fp_Widget extends WP_Widget
 }
 
     function fp_register_styles() {
-    // register  
+      
     wp_register_style('fp_styles', plugins_url('nivo-slider/nivo-slider.css', __FILE__));
     wp_register_style('fp_styles_theme', plugins_url('nivo-slider/themes/default/default.css', __FILE__));
 
-    // enqueue  
+ 
 
     wp_enqueue_style('fp_styles');
     wp_enqueue_style('fp_styles_theme');
@@ -104,20 +102,17 @@ class fp_Widget extends WP_Widget
     $args = array('post_type' => 'np_images', 'posts_per_page' => 5);
     $result = '<div class="slider-wrapper theme-default">';
     $result .= '<div id="slider" class="nivoSlider">';
-    //the loop
-    $loop = new WP_Query($args);
-    while ($loop->have_posts()) {
-        $loop->the_post();
+    
+    $querry = new WP_Query($args);
+    while ($querry->have_posts()) {
+        $querry->the_post();
 
-        $the_url = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), $type);
+        $img = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), $type);
 
-        $result .='<img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/>';
+        $result .='<img title="'.get_the_title().'" src="' . $img[0] . '" data-thumb="' . $img[0] . '" alt=""/>';
     }
-    $result .= '</div>';
-    $result .='<div id = "htmlcaption" class = "nivo-html-caption">';
-    $result .='<strong>This</strong> is an example of a <em>HTML</em> caption with <a href = "#">a link</a>.';
-    $result .='</div>';
-    $result .='</div>';
+    $result .= '</div>'.'</div>';
+
     return $result;
 }
 
@@ -127,11 +122,14 @@ function fp_init() {
     add_image_size('fp_widget', 180, 100, true);
     add_image_size('fp_function', 600, 280, true);
     
-    $args = array('public' => true, 'label' => 'Flow CptImages', 'supports' => array('title', 'thumbnail'));
+    $args = array('public' => true, 
+                    'label' => 'Flow CptImages', 
+                    'supports' => array('title', 'thumbnail'));
+    
     register_post_type('np_images', $args);
 }
 
-//hooks
+
 add_theme_support('post-thumbnails');
 add_action('init', 'fp_init');
 add_action('widgets_init', 'fp_widgets_init');
